@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\ActivityLog;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
+class ActivityLogger
+{
+    public static function log(string $action, string $description, ?Model $subject = null, ?int $userId = null): void
+    {
+        ActivityLog::create([
+            'user_id' => $userId ?? Auth::guard('web')->id(),
+            'action' => $action,
+            'subject_type' => $subject ? class_basename($subject) : null,
+            'subject_id' => $subject?->getKey(),
+            'description' => $description,
+        ]);
+    }
+}
